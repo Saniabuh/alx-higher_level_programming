@@ -1,23 +1,16 @@
 #!/usr/bin/node
 const request = require('request');
-const url = process.argv[2];
-
-request(url, function (error, response, body) {
-  if (error) {
-    console.log(error);
-  } else if (response.statusCode === 200) {
-    const films = JSON.parse(body).results;
-    let count = 0;
-    for (const i in films) {
-      const charx = films[i].characters;
-      for (const x in charx) {
-        if (charx[x].includes('18')) {
-          count++;
-        }
+request(process.argv[2], function (error, response, body) {
+  if (!error) {
+    const todos = JSON.parse(body);
+    let completed = {};
+    todos.forEach((todo) => {
+      if (todo.completed && completed[todo.userId] === undefined) {
+        completed[todo.userId] = 1;
+      } else if (todo.completed) {
+        completed[todo.userId] += 1;
       }
-    }
-    console.log(count);
-  } else {
-    console.log('Error Code: ' + response.statusCode);
+    });
+    console.log(completed);
   }
 });
